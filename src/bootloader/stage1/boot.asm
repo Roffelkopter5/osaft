@@ -85,20 +85,20 @@ start:
     xor bx, bx
     mov di, buffer
 
-.search_kernel:
-    mov si, kernel_file_name
+.search_stage2:
+    mov si, stage2_file_name
     mov cx, 11
     push di
     repe cmpsb 
     pop di
-    jz .found_kernel
+    jz .found_stage2
     add di, 32
     inc bx
     cmp bx, [bdb_dir_entries_count]
-    jl .search_kernel
-    call kernel_error
+    jl .search_stage2
+    call stage2_error
 
-.found_kernel:
+.found_stage2:
     mov ax, [di + 26] ; first cluster
     push ax
     mov ax, [bdb_reserved_sectors]
@@ -107,13 +107,13 @@ start:
     mov dl, [ebr_drive_number]
     call disk_read
 
-    mov bx, KERNEL_LOAD_SEGMENT
+    mov bx, STAGE2_LOAD_SEGMENT
     mov es, bx
-    mov bx, KERNEL_LOAD_OFFSET
+    mov bx, STAGE2_LOAD_OFFSET
     
     pop ax
 
-.load_kernel_loop:
+.load_stage2_loop:
     push ax
     add ax, 31
     
@@ -144,14 +144,14 @@ start:
 
 .load_after:
     cmp ax, 0x0FF8
-    jl .load_kernel_loop
+    jl .load_stage2_loop
 
     mov dl, [ebr_drive_number]
-    mov ax, KERNEL_LOAD_SEGMENT
+    mov ax, STAGE2_LOAD_SEGMENT
     mov ds, ax
     mov es, ax
 
-    jmp KERNEL_LOAD_SEGMENT:KERNEL_LOAD_OFFSET
+    jmp STAGE2_LOAD_SEGMENT:STAGE2_LOAD_OFFSET
 
     jmp halt
 
@@ -160,8 +160,8 @@ floppy_error:
     call puts
     jmp wait_and_reboot
 
-kernel_error:
-    mov si, str_kernel_error
+stage2_error:
+    mov si, str_stage2_error
     call puts
     jmp wait_and_reboot
 
@@ -286,12 +286,12 @@ disk_reset:
 ; data
 str_hello_msg: db 'Loading O-Saft...', ENDL, 0
 str_floppy_error: db 'Error: Unable to read from disk', ENDL, 0
-str_kernel_error: db 'Error: Unable to load kernel', ENDL, 0
+str_stage2_error: db 'Error: Unable to load stage2', ENDL, 0
 
-kernel_file_name: db 'KERNEL  BIN'
+stage2_file_name: db 'STAGE2  BIN'
 
-KERNEL_LOAD_SEGMENT equ 0x2000
-KERNEL_LOAD_OFFSET equ 0
+STAGE2_LOAD_SEGMENT equ 0x2000
+STAGE2_LOAD_OFFSET equ 0
 
 times 510-($-$$) db 0
 dw 0AA55h
