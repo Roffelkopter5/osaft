@@ -8,6 +8,7 @@
 		"C_Cpp.default.compilerPath": "/usr/bin/watcom/binl64/wcc",
 		"files.associations": {
 			"x86.h": "c"
-		}
+		},
+		"asm-code-lens.enableCodeLenses": false
 	}
 }
