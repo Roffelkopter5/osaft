@@ -5,8 +5,9 @@
 		}
 	],
 	"settings": {
-		"nasm.extraFlags": [
-			"-f obj"
-		]
+		"C_Cpp.default.compilerPath": "/usr/bin/watcom/binl64/wcc",
+		"files.associations": {
+			"x86.h": "c"
+		}
 	}
 }
