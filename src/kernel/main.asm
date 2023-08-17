@@ -30,7 +30,7 @@ puts:
     or al, al           ; verify if next character is null?
     jz .done
 
-    mov ah, 0x0E        ; call bios interrupt
+    mov ah, 0x0E        ; set bios interrupt code
     mov bh, 0           ; set page number to 0
     int 0x10
 

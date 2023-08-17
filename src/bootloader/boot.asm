@@ -284,7 +284,7 @@ disk_reset:
     ret
 
 ; data
-str_hello_msg: db 'Loading O-Saft', ENDL, 0
+str_hello_msg: db 'Loading O-Saft...', ENDL, 0
 str_floppy_error: db 'Error: Unable to read from disk', ENDL, 0
 str_kernel_error: db 'Error: Unable to load kernel', ENDL, 0
 
