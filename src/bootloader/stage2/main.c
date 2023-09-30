@@ -1,7 +1,8 @@
-#include "stdint.h"
-#include "stdio.h"
+#include "type.h"
+#include "printf.h"
 
 void _cdecl cstart_(uint16_t bootDrive)
 {
-    printf("Hello World");
+    uint16_t *p = &bootDrive;
+    printf("Hell%c %s %d %d %u %u %x %p %f", 'o', "World", 134, -134, 134, -134, 134, p);
 }

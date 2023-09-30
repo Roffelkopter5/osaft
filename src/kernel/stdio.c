@@ -1,4 +1,4 @@
-#include "stdio.h"
+#include "type.h"
 #include "x86.h"
 
 #define PRINT_NEUTRAL 0

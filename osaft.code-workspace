@@ -7,7 +7,13 @@
 	"settings": {
 		"C_Cpp.default.compilerPath": "/usr/bin/watcom/binl64/wcc",
 		"files.associations": {
-			"x86.h": "c"
+			"*.fixture": "yaml",
+			"*.attr": "yaml",
+			"*.group": "yaml",
+			"*.ui": "xml",
+			"*.asm": "asm-collection",
+			"x86.h": "c",
+			"type.h": "c"
 		},
 		"asm-code-lens.enableCodeLenses": false
 	}

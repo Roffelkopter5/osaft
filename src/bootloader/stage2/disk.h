@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdint.h"
+#include "type.h"
 
 typedef struct DISK
 {
@@ -11,4 +11,4 @@ typedef struct DISK
 } DISK;
 
 bool DISK_Initialize(DISK *disk, uint8_t driveNumber);
-bool DISK_Read_Sectors(DISK *disk, uint32_t lba, uint8_t sectors, uint8_t far *dataOut);
+bool DISK_ReadSectors(DISK *disk, uint32_t lba, uint8_t sectors, uint8_t far *dataOut);

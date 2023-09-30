@@ -1,5 +1,5 @@
 #pragma once
-#include "stdint.h"
+#include "type.h"
 
 void putc(char c);
 
