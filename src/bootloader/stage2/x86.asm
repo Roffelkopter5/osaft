@@ -152,17 +152,16 @@ _x86_Disk_Read:
     push bx
     push es
 
-    mov dl, [bp + 4]
+    mov dl, [bp + 4] ; drive
 
-    mov ah, 2
-    mov ch, [bp + 6]
-    mov cl, [bp + 7]
+    mov ch, [bp + 6] ; cylinder
+    mov cl, [bp + 7] ; cylinder
     shl cl, 6
 
-    mov dh, [bp + 8]
+    mov dh, [bp + 8] ; head
 
-    mov al, [bp + 10]
-    and al, 0x3f
+    mov al, [bp + 10] ; sector
+    and al, 3Fh
     or cl, al
 
     mov al, [bp + 12]
@@ -171,6 +170,7 @@ _x86_Disk_Read:
     mov es, bx
     mov bx, [bp + 14]
 
+    mov ah, 2
     stc
     int 13h
 

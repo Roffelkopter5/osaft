@@ -1,5 +1,6 @@
 #include "type.h"
 #include "x86.h"
+#include "printf.h"
 
 static char digits[17] = "0123456789ABCDEF";
 
