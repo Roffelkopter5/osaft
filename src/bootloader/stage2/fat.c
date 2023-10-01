@@ -5,6 +5,7 @@
 #include "printf.h"
 
 #define SECTOR_SIZE 512
+#define MAX_OPEN_FILES 10
 
 #pragma pack(push, 1)
 typedef struct FAT_BootSector
@@ -33,6 +34,16 @@ typedef struct FAT_BootSector
 } FAT_BootSector;
 #pragma pack(pop)
 
+typedef struct FAT_FileData
+{
+    uint8_t buffer[SECTOR_SIZE];
+    FAT_File file;
+    bool isOpen;
+    uint32_t startCluster;
+    uint32_t currentCluster;
+    uint32_t currentSector;
+} FAT_FileData;
+
 typedef struct FAT_Data
 {
     union BS
@@ -41,15 +52,14 @@ typedef struct FAT_Data
         uint8_t bootSectorBytes[SECTOR_SIZE];
     } BS;
     DISK *disk;
+    FAT_FileData openFiles[MAX_OPEN_FILES + 1];
 } FAT_Data;
 
 static FAT_Data far *g_Data = NULL;
 static uint8_t far *g_Fat = NULL;
-static FAT_DirEntry far *g_RootDir = NULL;
-
-bool FAT_readBootSector(DISK *disk)
+bool FAT_readBootSector()
 {
-    return DISK_readSectors(disk, 0, 1, g_Data->BS.bootSectorBytes);
+    return DISK_readSectors(g_Data->disk, 0, 1, g_Data->BS.bootSectorBytes);
 }
 
 bool FAT_readFat()
@@ -57,11 +67,15 @@ bool FAT_readFat()
     return DISK_readSectors(g_Data->disk, g_Data->BS.bootSector.reservedSectors, g_Data->BS.bootSector.sectorsPerFat, g_Fat);
 }
 
+bool FAT_openRootDir()
+{
+    return true;
+}
+
 bool FAT_initialize(DISK *disk)
 {
     g_Data = (FAT_Data far *)MEMORY_FAT_ADDR;
     g_Data->disk = disk;
-    printf("Reading boot sector\n\r");
     if (!FAT_readBootSector(disk))
     {
         printf("Failed to read bootsector\n\r");
@@ -74,12 +88,15 @@ bool FAT_initialize(DISK *disk)
         printf("Not enough memory to load fat\n\r");
         return false;
     }
-    printf("Reading fat\n\r");
     if (!FAT_readFat())
     {
         printf("Failed to read fat\n\r");
         return false;
     }
-    g_RootDir = (FAT_DirEntry far *)(g_Fat + fatSize);
+    if (!FAT_openRootDir())
+    {
+        printf("Failed to open root dir\n\r");
+        return false;
+    }
     return true;
 }

@@ -11,6 +11,7 @@ typedef struct FAT_DirEntry
     uint8_t createdTenth;
     uint16_t createdTime;
     uint16_t createdDate;
+    uint16_t lastAccessDate;
     uint16_t firstClusterHigh;
     uint16_t modifiedTime;
     uint16_t modifiedDate;
@@ -23,6 +24,8 @@ typedef struct FAT_File
 {
     int handle;
     bool isDirectory;
+    uint32_t index;
+    uint32_t size;
 } FAT_File;
 
 bool FAT_initialize(DISK *disk);
