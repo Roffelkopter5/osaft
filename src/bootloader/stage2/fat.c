@@ -3,9 +3,15 @@
 #include "disk.h"
 #include "memlayout.h"
 #include "printf.h"
+#include "string.h"
+#include "memory.h"
 
 #define SECTOR_SIZE 512
 #define MAX_OPEN_FILES 10
+#define ROOT_DIR_HANDLE 0
+#define MAX_NAME_LENGTH 12
+
+#define MIN(a, b) ((a < b) ? a : b)
 
 #pragma pack(push, 1)
 typedef struct FAT_BootSector
@@ -53,6 +59,7 @@ typedef struct FAT_Data
     } BS;
     DISK *disk;
     FAT_FileData openFiles[MAX_OPEN_FILES + 1];
+    FAT_FileData *rootDir;
 } FAT_Data;
 
 static FAT_Data far *g_Data = NULL;
@@ -69,6 +76,20 @@ bool FAT_readFat()
 
 bool FAT_openRootDir()
 {
+    g_Data->rootDir = &g_Data->openFiles[ROOT_DIR_HANDLE];
+    g_Data->rootDir->file.handle = ROOT_DIR_HANDLE;
+    g_Data->rootDir->file.index = 0;
+    g_Data->rootDir->file.isDirectory = true;
+    g_Data->rootDir->file.size = g_Data->BS.bootSector.rootDirEntries * sizeof(FAT_DirEntry);
+    g_Data->rootDir->isOpen = true;
+    // g_Data->rootDir->startCluster = g_Data->BS.bootSector.reservedSectors + g_Data->BS.bootSector.fatCount * g_Data->BS.bootSector.sectorsPerFat;
+    // g_Data->rootDir->currentSector = g_Data->rootDir->startCluster;
+    // g_Data->rootDir->currentSector = 0;
+
+    DISK_readSectors(g_Data->disk, g_Data->BS.bootSector.reservedSectors + g_Data->BS.bootSector.fatCount * g_Data->BS.bootSector.sectorsPerFat, 1, g_Data->rootDir->buffer);
+
+    printf("F");
+
     return true;
 }
 
@@ -99,4 +120,44 @@ bool FAT_initialize(DISK *disk)
         return false;
     }
     return true;
+}
+
+bool FAT_findFile(FAT_File *dir, const char *name, FAT_DirEntry *entryOut)
+{
+    return false;
+}
+
+FAT_File far *FAT_openFile(const char *path)
+{
+    printf("Opening: %s\n\r", path);
+
+    // remove leading slash
+    if (*path == '/')
+        path++;
+
+    char *slash;
+    char name[MAX_NAME_LENGTH];
+    uint16_t n;
+    FAT_File *currentDir = &g_Data->rootDir->file;
+    FAT_DirEntry entry;
+
+    do
+    {
+        slash = strchr(path, '/');
+        n = slash ? slash - path : MIN(MAX_NAME_LENGTH - 1, strlen(path));
+        printf("Slash at %p (offset: %d)\n\r", slash, n);
+        memcpy(name, path, n);
+        path += n + 1;
+        name[n] = 0;
+        if (FAT_findFile(currentDir, name, &entry))
+        {
+        }
+        else
+        {
+            printf("Error: '%s' is not a directory!\n\r", name);
+            return NULL;
+        }
+    } while (slash);
+
+    return NULL;
 }

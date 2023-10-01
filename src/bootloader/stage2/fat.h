@@ -29,7 +29,7 @@ typedef struct FAT_File
 } FAT_File;
 
 bool FAT_initialize(DISK *disk);
-bool FAT_openFile(FAT_File far *file, const char *path);
+FAT_File far *FAT_openFile(const char *path);
 uint32_t FAT_readFile(FAT_File far *file, uint32_t bytes, void *dataOut);
 bool FAT_readEntry(FAT_File far *dir, FAT_DirEntry *entry);
 bool FAT_closeFile(FAT_File far *file);
