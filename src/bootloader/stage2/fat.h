@@ -8,10 +8,10 @@ typedef struct FAT_DirEntry
     uint8_t name[11];
     uint8_t attributes;
     uint8_t _reserved;
-    uint8_t createdTenth;
+    uint8_t createdTimeTenths;
     uint16_t createdTime;
     uint16_t createdDate;
-    uint16_t lastAccessDate;
+    uint16_t accessedDate;
     uint16_t firstClusterHigh;
     uint16_t modifiedTime;
     uint16_t modifiedDate;
@@ -31,5 +31,4 @@ typedef struct FAT_File
 bool FAT_initialize(DISK *disk);
 FAT_File far *FAT_openFile(const char *path);
 uint32_t FAT_readFile(FAT_File far *file, uint32_t bytes, void *dataOut);
-bool FAT_readEntry(FAT_File far *dir, FAT_DirEntry *entry);
 bool FAT_closeFile(FAT_File far *file);
